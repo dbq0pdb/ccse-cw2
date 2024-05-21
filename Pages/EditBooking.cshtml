@@ -1,0 +1,19 @@
+﻿@page
+@model ccsecw1.Pages.EditBookingModel
+@{
+    ViewData["Title"] = "Edit Booking";
+}
+
+<h2>Edit Booking</h2>
+
+<form method="post">
+    <div>
+        <label asp-for="Booking.CheckInDate"></label>
+        <input asp-for="Booking.CheckInDate" />
+    </div>
+    <div>
+        <label asp-for="Booking.CheckOutDate"></label>
+        <input asp-for="Booking.CheckOutDate" />
+    </div>
+    <button type="submit">Save</button>
+</form>

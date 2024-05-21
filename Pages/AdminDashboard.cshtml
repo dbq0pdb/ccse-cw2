@@ -1,0 +1,33 @@
+﻿@page
+@model ccsecw1.Pages.AdminDashboardModel
+@{
+}
+<h2 class="text-center">Welcome to your Admin Dashboard</h2>
+
+
+<h3 class="text-center">Admin User Account Info</h3>
+
+<div>
+    First Name: @Model.appUser?.FirstName
+</div>
+<div>
+    Last Name: @Model.appUser?.LastName
+</div>
+<div>
+    Email: @Model.appUser?.Email
+</div>
+<div>
+    Phone Number: @Model.appUser?.PhoneNumber
+</div>
+<div>
+    Pass Port Id: @Model.appUser?.PassPortNumber
+</div>
+<div>
+    Customer number: @Model.appUser?.CustomerNumber
+</div>
+<div>
+    Address: @Model.appUser?.Address
+</div>
+<div>
+    Created At: @Model.appUser?.CreatedAt.ToString("MM/dd/yyyy")
+</div>

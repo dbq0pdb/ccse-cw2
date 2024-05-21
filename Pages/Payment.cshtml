@@ -1,0 +1,14 @@
+﻿@page
+@model ccsecw1.Pages.PaymentModel
+@{
+}
+
+<h2 class="text-center">Payment Section</h2>
+
+<form method="post">
+    <div>
+        <label asp-for="PaymentAmount">Payment Amount:</label>
+        <input asp-for="PaymentAmount" />
+    </div>
+    <button type="submit">Make Payment</button>
+</form>

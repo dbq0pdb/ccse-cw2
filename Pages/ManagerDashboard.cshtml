@@ -1,0 +1,72 @@
+﻿@page
+@model ccsecw1.Pages.ManagerDashboardModel
+@{
+}
+<h2 class="text-center">Welcome to your Manager Dashboard</h2>
+
+
+<h3 class="text-center">Manager User Account Info</h3>
+
+@*user infomation*@
+<div>
+    First Name: @Model.appUser?.FirstName
+</div>
+<div>
+    Last Name: @Model.appUser?.LastName
+</div>
+<div>
+    Email: @Model.appUser?.Email
+</div>
+<div>
+    Phone Number: @Model.appUser?.PhoneNumber
+</div>
+<div>
+    Pass Port Id: @Model.appUser?.PassPortNumber
+</div>
+<div>
+    Customer number: @Model.appUser?.CustomerNumber
+</div>
+<div>
+    Address: @Model.appUser?.Address
+</div>
+<div>
+    Created At: @Model.appUser?.CreatedAt.ToString("MM/dd/yyyy")
+</div>
+
+
+@*Booking infomation*@
+
+<h3 class="text-center">Bookings Information</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Booking ID</th>
+            <th>Customer Number</th>
+            <th>Check-In Date</th>
+            <th>Check-Out Date</th>
+            <th>Tour Check-In Date</th>
+            <th>Tour Check-Out Date</th>
+            <th>Discount Percentage</th>
+            <th>Total Price</th>
+            <th>Cancelled</th>
+            <th>Fulfilled</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model.Bookings)
+        {
+            <tr>
+                <td>@booking.BookingId</td>
+                <td>@booking.CustomerNumber</td>
+                <td>@booking.CheckInDate.ToShortDateString()</td>
+                <td>@booking.CheckOutDate.ToShortDateString()</td>
+                <td>@booking.TourCheckInDate.ToShortDateString()</td>
+                <td>@booking.TourCheckOutDate.ToShortDateString()</td>
+                <td>@booking.DiscountPercentage</td>
+                <td>@booking.TotalPrice</td>
+                <td>@(booking.Cancelled ? "Yes" : "No")</td>
+                <td>@(booking.Fulfilled ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>

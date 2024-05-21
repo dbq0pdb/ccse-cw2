@@ -1,0 +1,372 @@
+﻿@page
+@model ccsecw1.Pages.BookingModel
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<header>
+    <h2>Bookings</h2>
+    <div id="bookingSelector" class="tab">
+        <p>What do you want to book today?</p>
+        <button class="bookingOption" onclick="openTab(event, 'hotelonlyportal', 'hotelsearch', 'hotelsearchfilters', 'hotelbooking')">Hotels</button>
+        <button class="bookingOption" onclick="openTab(event, 'touronlyportal', 'toursearch', 'toursearchfilters', 'tourbooking')">Tours</button>
+        <button class="bookingOption" onclick="openTab(event, 'packageonlyportal', 'packagesearch','packagesearchfilters', 'packagebooking')">Packages</button>
+    </div>
+</header>
+
+<body>
+    <div id="bookingPortal">
+
+        <!-- hotel only booking portal -->
+        <div id="hotelonlyportal" class="tabcontent hidden">
+            <h3>Hotel only Booking Portal</h3>
+
+            <!-- hotel search -->
+            <div id="hotelsearch" class="tabcontent hidden">
+                <h3>Hotel Search</h3>
+
+                <!-- hotel search filters -->
+                <div id="hotelsearchfilters" class="tabcontent hidden">
+                    <label for="brandFilter">Select Brand:</label>
+                    <select id="brandFilter" onchange="filterHotels()">
+                        <option value="">All Brands</option>
+                        @foreach (var hotel in Model.Hotels)
+                        {
+                            <option value="@hotel.HotelId">@hotel.Brand</option>
+                        }
+                    </select>
+
+                    <label for="startDateFilter">Check in Date:</label>
+                    <input type="date" id="startDateFilter">
+
+                    <label for="endDateFilter">Check out Date:</label>
+                    <input type="date" id="endDateFilter">
+
+                    <button onclick="clearHotelFilters()">Clear Hotel Filters</button>
+                    <button onclick="applyHotelFilters()">Apply Hotel Filters</button>
+                </div>
+
+                <!-- hotel grid -->
+                <div class="hotel-grid">
+                    @foreach (var hotel in Model.Hotels)
+                    {
+                        <div class="hotel-item">
+                            <h4>@hotel.Name</h4>
+                            <p>@hotel.Description</p>
+                            <p>Rating: @hotel.Rating</p>
+                            <p>Location: @hotel.Location</p>
+                            <p>Single room price: @hotel.SingleRoomPrice</p>
+                            <p>Double room price: @hotel.DoubleRoomPrice</p>
+                            <p>Family room price: @hotel.FamilyRoomPrice</p>
+                            <button onclick="SelectedHotel(@hotel.HotelId)">Book Now</button>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+            <!-- selected hotel booking -->
+            <div id="hotelbooking" class="tabcontent hidden">
+                <h3>Hotel Booking</h3>
+                <form asp-controller="Bookings" asp-action="Create" method="post">
+
+
+                    room type
+
+
+                    <label>Check In Date:</label>
+                    <input type="date" name="checkInDate">
+
+                    <label>Check Out Date:</label>
+                    <input type="date" name="checkOutDate">
+
+                    <button type="submit">Book Now</button>
+
+                </form>
+            </div>
+        </div>
+
+
+
+
+        <!-- tour only booking portal -->
+        <div id="touronlyportal" class="tabcontent hidden">
+            <h3>Tour only Booking Portal</h3>
+
+            <!-- tour search -->
+            <div id="toursearch" class="tabcontent hidden">
+                <h3>Tour Search</h3>
+
+                <!-- tour search filters -->
+                <div id="toursearchfilters" class="tabcontent hidden">
+                    <label for="brandFilter">Select Brand:</label>
+                    <select id="brandFilter" onchange="filterTours()">
+                        <option value="">All Brands</option>
+                        @foreach (var tour in Model.Tours)
+                        {
+                            <option value="@tour.TourId">@tour.Brand</option>
+                        }
+                    </select>
+
+                    <label for="startDateFilter">Check in Date:</label>
+                    <input type="date" id="startDateFilter">
+
+                    <label for="endDateFilter">Check out Date:</label>
+                    <input type="date" id="endDateFilter">
+
+                    <button onclick="clearTourFilters()">Clear Tour Filters</button>
+                    <button onclick="applyTourFilters()">Apply Tour Filters</button>
+                </div>
+                <!-- tour grid -->
+                <div class="tour-grid">
+                    @foreach (var tour in Model.Tours)
+                    {
+                        <div class="tour-item">
+                            <h4>@tour.Name</h4>
+                            <p>@tour.Description</p>
+                            <p>Rating: @tour.Rating</p>
+                            <p>Location: @tour.Location</p>
+                            <p>Duration: @tour.DurationDays days</p>
+                            <p>Price Per Day: $@tour.PricePerDay</p>
+                            <p>Total Price: $@tour.TotalTourPrice</p>
+                            <p>Available Spaces: @tour.AvailableSpaces</p>
+                            <button onclick="bookTour('@tour.TourId')">Book Now</button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- selected tour booking -->
+            <div id="tourbooking" class="tabcontent hidden">
+                <h3>Tour Booking</h3>
+                <form id="tourBookingForm" method="post" action="/TourBooking">
+                    <input type="hidden" id="tourId" name="Input.TourId" value="">
+                    <input type="date" id="tourStartDate" name="Input.TourStartDate">
+                    <input type="number" id="numberOfPeople" name="Input.NumberOfPeople" min="1">
+                    <button type="submit">Book Now</button>
+                </form>
+            </div>
+        </div>
+ </div>
+
+     
+</body>
+
+
+
+
+<script>
+
+    function applyHotelFilters() {
+        // Get the selected filters
+        var selectedBrand = document.getElementById('brandFilter').value;
+        // Implement logic to apply hotel filters based on the selected criteria
+        var filteredHotels = Model.Hotels; // Assuming Model.Hotels contains the full list of hotels
+        if (selectedBrand) {
+            filteredHotels = filteredHotels.filter(function (hotel) {
+                return hotel.Brand === selectedBrand;
+            });
+        }
+        updateHotelGrid(filteredHotels); // Update the hotel grid with the filtered hotels
+    }
+
+    function clearHotelFilters() {
+        // Clear the selected filters and reset the hotel grid to its original state
+        updateHotelGrid(Model.Hotels); // Reset the hotel grid with the full list of hotels
+    }
+
+    function applyTourFilters() {
+        // Get the selected filters
+        var selectedBrand = document.getElementById('tourBrandFilter').value;
+        // Implement logic to apply tour filters based on the selected criteria
+        var filteredTours = Model.Tours; // Assuming Model.Tours contains the full list of tours
+        if (selectedBrand) {
+            filteredTours = filteredTours.filter(function (tour) {
+                return tour.Brand === selectedBrand;
+            });
+        }
+        updateTourGrid(filteredTours); // Update the tour grid with the filtered tours
+    }
+
+    function clearTourFilters() {
+        // Clear the selected filters and reset the tour grid to its original state
+        updateTourGrid(Model.Tours); // Reset the tour grid with the full list of tours
+    }
+
+    function SelectedHotel(hotelId) {
+        document.getElementById('hotelId').value = hotelId;
+    }
+
+
+
+    function updateHotelGrid(data) {
+        var hotelGrid = document.querySelector('.hotel-grid');
+        hotelGrid.innerHTML = '';
+
+        data.forEach(hotel => {
+            var hotelItem = document.createElement('div');
+            hotelItem.classList.add('hotel-item');
+            hotelItem.innerHTML = `
+                        <h4>${hotel.Name}</h4>
+                        <p>${hotel.Description}</p>
+                        <p>Rating: ${hotel.Rating}</p>
+                        <p>Location: ${hotel.Location}</p>
+                        <p>Single room price: ${hotel.SingleRoomPrice}</p>
+                        <p>Double room price: ${hotel.DoubleRoomPrice}</p>
+                        <p>Family room price: ${hotel.FamilyRoomPrice}</p>
+                        <button onclick="bookHotel(${hotel.HotelId})">Book Now</button>
+                    `;
+            hotelGrid.appendChild(hotelItem);
+        });
+    }
+
+    function updateTourGrid(data) {
+        var tourGrid = document.querySelector('.tour-grid');
+        tourGrid.innerHTML = '';
+
+        data.forEach(tour => {
+            var tourItem = document.createElement('div');
+            tourItem.classList.add('tour-item');
+            tourItem.innerHTML = `
+                    <h4>${tour.Name}</h4>
+                    <p>${tour.Description}</p>
+                    <p>Rating: ${tour.Rating}</p>
+                    <p>Location: ${tour.Location}</p>
+                    <p>Duration: ${tour.DurationDays} days</p>
+                    <p>Price Per Day: $${tour.PricePerDay}</p>
+                    <p>Total Price: $${tour.TotalTourPrice}</p>
+                    <p>Available Spaces: ${tour.AvailableSpaces}</p>
+                    <button onclick="bookTour('${tour.TourId}')">Book Now</button>
+                `;
+            tourGrid.appendChild(tourItem);
+        });
+    }
+
+
+
+
+    function openTab(event, ...tabIds) {
+        // Hide all tab contents
+        var tabContents = document.querySelectorAll('.tabcontent');
+        tabContents.forEach(tabContent => {
+            tabContent.classList.add('hidden');
+        });
+
+        // Show the selected tab contents
+        tabIds.forEach(tabId => {
+            var tab = document.getElementById(tabId);
+            if (tab) {
+                tab.classList.remove('hidden');
+            }
+        });
+    }
+
+</script>
+
+
+
+<style>
+    /* General styles */
+    .tab {
+        text-align: center;
+    }
+
+    #bookingPortal {
+        border: 1px solid black;
+        padding: 10px;
+        margin-top: 20px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    /* Hotel grid styles */
+    .hotel-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .hotel-item {
+        width: 30%;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9; /* Light background color */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+        transition: 0.3s; /* Add a smooth transition on hover */
+    }
+
+        .hotel-item h4 {
+            margin-top: 0;
+        }
+
+        .hotel-item p {
+            color: #555; /* Text color */
+        }
+
+        .hotel-item button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* Add a smooth transition on hover */
+        }
+
+            .hotel-item button:hover {
+                background-color: #45a049; /* Darker background color on hover */
+            }
+
+    /* Tour grid styles */
+    .tour-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .tour-item {
+        width: 30%;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9; /* Light background color */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+        transition: 0.3s; /* Add a smooth transition on hover */
+    }
+
+        .tour-item h4 {
+            margin-top: 0;
+        }
+
+        .tour-item p {
+            color: #555; /* Text color */
+        }
+
+        .tour-item button {
+            background-color: #008CBA;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* Add a smooth transition on hover */
+        }
+
+            .tour-item button:hover {
+                background-color: #006080; /* Darker background color on hover */
+            }
+
+</style>
