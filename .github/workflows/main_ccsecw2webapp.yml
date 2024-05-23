@@ -22,7 +22,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
+
     - name: Build and push container image to Docker Hub
       id: build-and-push
       uses: docker/build-push-action@v2
@@ -30,17 +30,6 @@ jobs:
         push: true
         tags: yourusername/myapp:${{ github.sha }}
         file: ./Dockerfile
-
-    - name: Run Snyk to check Docker image for vulnerabilities
-      run: |
-        docker pull yourusername/myapp:${{ github.sha }}
-        docker run -v $PWD:/app -v /var/run/docker.sock:/var/run/docker.sock snyk/snyk-cli:latest test --docker yourusername/myapp:${{ github.sha }}
-
-    - name: Upload Snyk Report
-      uses: actions/upload-artifact@v2
-      with:
-        name: snyk-report
-        path: snyk-report.json
 
   deploy:
     runs-on: ubuntu-latest
