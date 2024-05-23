@@ -32,9 +32,11 @@ jobs:
         tags: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
         file: ./Dockerfile
 
+    - name: Pull Snyk CLI Docker image
+      run: docker pull snyk/snyk-cli:latest
+
     - name: Run Snyk to check Docker image for vulnerabilities
       run: |
-        docker pull ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
         docker run -v $PWD:/app -v /var/run/docker.sock:/var/run/docker.sock snyk/snyk-cli:latest test --docker ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
 
     - name: Upload Snyk Report
