@@ -1,4 +1,4 @@
-name: Build and deploy container app to Azure Web App - ccsecw2webapp
+name: Build, Scan, and Deploy Container App to Azure Web App - ccsecw2webapp
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_and_scan:
     runs-on: 'ubuntu-latest'
 
     steps:
@@ -20,7 +20,6 @@ jobs:
       with:
         command: test
         args: --fail-on=upgradable
-      working-directory: .
         
     - name: Upload Snyk Report
       uses: actions/upload-artifact@v2
@@ -47,7 +46,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build_and_scan
     environment:
       name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
