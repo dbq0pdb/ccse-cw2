@@ -32,19 +32,16 @@ jobs:
         tags: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
         file: ./Dockerfile
 
-    - name: Run Snyk on Docker image
-      uses: snyk/actions/docker@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
-        args: --severity-threshold=high --json-file-output=snyk-docker-report.json --fail-on=upgradable
+    - name: Run Snyk to check Docker image for vulnerabilities
+      run: |
+        docker pull ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
+        docker run -v $PWD:/app -v /var/run/docker.sock:/var/run/docker.sock snyk/snyk-cli:latest test --docker ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
 
     - name: Upload Snyk Report
       uses: actions/upload-artifact@v2
       with:
         name: snyk-report
-        path: snyk-docker-report.json
+        path: snyk-report.json
 
   deploy:
     runs-on: ubuntu-latest
