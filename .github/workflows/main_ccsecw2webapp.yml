@@ -35,7 +35,7 @@ jobs:
     - name: Run Snyk on Docker image
       uses: snyk/actions/docker@master
       env:
-        SNYK_TOKEN: ${{ secrets.SNYKTOKEN }}
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         image: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
         args: --severity-threshold=high --json-file-output=snyk-docker-report.json --fail-on=upgradable
