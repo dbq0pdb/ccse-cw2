@@ -13,20 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Snyk Scan
-      uses: snyk/actions/node@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        command: test
-        args: --fail-on=upgradable
-        
-    - name: Upload Snyk Report
-      uses: actions/upload-artifact@v2
-      with:
-        name: snyk-report
-        path: snyk-test-report.json
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
@@ -38,11 +24,17 @@ jobs:
         password: ${{ secrets.AzureAppService_ContainerPassword_0b5bac57b0bd4ca2b524d5c48f14a083 }}
 
     - name: Build and push container image to registry
-      uses: docker/build-push-action@v3
+      id: build-image
+      uses: docker/build-push-action@v2
       with:
         push: true
         tags: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
         file: ./Dockerfile
+
+    - name: Snyk Docker Scan
+      run: npx snyk container test ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   deploy:
     runs-on: ubuntu-latest
