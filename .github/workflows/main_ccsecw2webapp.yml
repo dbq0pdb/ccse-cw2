@@ -13,21 +13,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Snyk test
-      uses: snyk/actions/nodejs@master
+    - name: Snyk Scan
+      uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
         command: test
         args: --fail-on=moderate
-        reporter: junit
-        junit-report-name: snyk-report.xml
         
     - name: Upload Snyk Report
       uses: actions/upload-artifact@v2
       with:
         name: snyk-report
-        path: snyk-report.xml
+        path: snyk-test-report.json
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
