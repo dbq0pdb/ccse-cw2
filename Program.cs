@@ -15,8 +15,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
 
-
+builder.Services.AddHealthChecks();
 var app = builder.Build();
+app.MapHealthChecks("/health");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
