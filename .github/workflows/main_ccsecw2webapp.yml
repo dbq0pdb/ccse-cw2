@@ -20,6 +20,7 @@ jobs:
       with:
         command: test
         args: --fail-on=upgradable
+      working-directory: .
         
     - name: Upload Snyk Report
       uses: actions/upload-artifact@v2
