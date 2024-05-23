@@ -12,10 +12,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-    options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-
+    options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 app.MapHealthChecks("/health");
 
@@ -36,4 +38,5 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.Run();
+// Ensure the application listens on port 80
+app.Run("http://0.0.0.0:80");
