@@ -1,5 +1,6 @@
 name: Build, Scan, and Deploy Container App to Azure Web App - ccsecw2webapp
 
+
 on:
   push:
     branches:
@@ -28,7 +29,9 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
+        tags: |
+          ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
+          ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:latest
         file: ./Dockerfile
 
   Synk:
@@ -82,6 +85,8 @@ jobs:
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_628f743c4b3a44dfa39c8a57b309b0a3 }}
         images: 'ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}'
+
+ 
   Zap:
     name: Run ZAP Scan
     runs-on: ubuntu-latest
