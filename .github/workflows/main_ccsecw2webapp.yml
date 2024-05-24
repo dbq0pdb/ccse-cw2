@@ -84,12 +84,13 @@ jobs:
       uses: zaproxy/action-full-scan@v0.10.0
       with:
         target: ${{ needs.deploy.outputs.webapp-url }}
-        cmd: '-r report.html'
+        cmd: '-r zap_report.html'
         fail-unknown-outcome: false
         fail-action-on-warnings: false
 
     - name: Upload ZAP Report
+      if: always() 
       uses: actions/upload-artifact@v2
       with:
-        name: zap-report
-        path: report.html
+        name: zap-scan-results
+        path: zap_report.html
