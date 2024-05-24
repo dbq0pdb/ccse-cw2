@@ -79,7 +79,7 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-#
+##
     - name: ZAP Full Scan
       uses: zaproxy/action-full-scan@v0.10.0
       with:
