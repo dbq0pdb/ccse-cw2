@@ -69,7 +69,7 @@ jobs:
           name: snyk-scan-results
           path: snyk_report.json
 
-  deploy:
+  Deploy:
     runs-on: ubuntu-latest
     needs: Synk
     environment:
@@ -88,9 +88,9 @@ jobs:
 
  
   Zap:
-    name: Run ZAP Scan
+    name: Zap
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: Deploy
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
