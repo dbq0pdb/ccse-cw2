@@ -85,31 +85,38 @@ jobs:
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_628f743c4b3a44dfa39c8a57b309b0a3 }}
         images: 'ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}'
-
- 
+  
+        
   Zap:
-    name: Zap
+    name: Run ZAP Scan
     runs-on: ubuntu-latest
-    needs: Deploy
+    needs: deploy
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Install OWASP ZAP
-        run: sudo apt-get update && sudo apt-get install zaproxy -y
-
+  
+      - name: Install OWASP ZAP and zap-cli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:owasp/zap
+          sudo apt-get update
+          sudo apt-get install -y zaproxy
+          sudo apt-get install -y python3-pip
+          pip3 install zap-cli
+  
       - name: Start OWASP ZAP
         run: zap.sh -daemon -port 8080 -host 127.0.0.1 -config api.disablekey=true
-
+  
       - name: Run ZAP Full Scan
         continue-on-error: true
         run: zap-cli -p 8080 -t ${{ needs.deploy.outputs.webapp-url }} quick-scan --self-contained
-
+  
       - name: Report Generation
         run: zap-cli report -f html -o owasp-zap-report.html
-
+  
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v2
         with:
           name: owasp-zap-report
-          path: owasp-zap-report.html 
+          path: owasp-zap-report.html
