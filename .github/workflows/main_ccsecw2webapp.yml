@@ -36,13 +36,14 @@ jobs:
         docker pull snyk/snyk-cli:docker
         docker run --rm \
           -v /var/run/docker.sock:/var/run/docker.sock \
+          -e SNYK_TOKEN=${{ secrets.SNYK_TOKEN }} \
           snyk/snyk-cli:docker test ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }} \
           --file=./Dockerfile \
           --severity-threshold=high \
-          --json | tee snyk_report.json
+          --json > snyk_report.json
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-#
+
     - name: Upload Snyk scan results
       uses: actions/upload-artifact@v3
       with:
