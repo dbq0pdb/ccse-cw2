@@ -45,10 +45,15 @@ jobs:
     - name: Install .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '7.0'
+        dotnet-version: '7.0' 
 
     - name: Restore .NET dependencies
       run: dotnet restore ./ccsecw2.csproj
+
+    - name: Monitor .NET project with Snyk
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk monitor --file=./ccsecw2.csproj --project-name=ccsecw2
 
     - name: Run Snyk to check for vulnerabilities
       env:
