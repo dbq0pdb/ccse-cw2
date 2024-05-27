@@ -74,3 +74,13 @@ jobs:
           slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_628f743c4b3a44dfa39c8a57b309b0a3 }}
           images: 'ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}'
+
+
+  ZAP:
+    needs: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          target: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
