@@ -55,12 +55,12 @@ jobs:
       run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
     - name: Run Snyk to check for vulnerabilities
-      run: snyk test --file=ccsecw2.csproj --all-projects
+      run: snyk test --all-projects
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
     - name: Generate Snyk report
-      run: snyk test --file=ccsecw2.csproj --json > snyk_report.json
+      run: snyk test --all-projects --json > snyk_report.json
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
