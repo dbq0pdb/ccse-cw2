@@ -25,6 +25,8 @@ jobs:
           args: --json-file-output=snyk-results.json
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: List files to check if snyk-results.json was created
+        run: ls -la
       - name: Upload Snyk results
         uses: actions/upload-artifact@v3
         with:
