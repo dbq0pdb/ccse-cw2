@@ -84,9 +84,11 @@ jobs:
         uses: zaproxy/action-full-scan@v0.10.0
         with:
           target: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-          
+
       - name: Upload ZAP results
         uses: actions/upload-artifact@v3
         with:
           name: zap-results
           path: zap-results.json
+
+          
