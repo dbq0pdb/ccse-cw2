@@ -43,6 +43,7 @@ jobs:
       uses: snyk/actions/dotnet@master
       with:
         command: test
+        args: --file=ccsecw2.csproj
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -53,7 +54,6 @@ jobs:
         path: snyk_report.json
 
 
-        
   deploy:
     runs-on: ubuntu-latest
     needs: Build
