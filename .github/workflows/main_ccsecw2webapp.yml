@@ -82,4 +82,4 @@ jobs:
           id: zap-scan
           uses: zaproxy/action-full-scan@v0.10.0
           with:
-            target: 'ccsecw2webapp.azurewebsites.net'
+            target: 'https://ccsecw2webapp.azurewebsites.net'
