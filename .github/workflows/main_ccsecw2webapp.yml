@@ -42,10 +42,18 @@ jobs:
     - name: Set up Snyk
       uses: snyk/actions/setup@master
 
+    - name: Install .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0'
+
+    - name: Restore .NET dependencies
+      run: dotnet restore ./ccsecw2.csproj
+
     - name: Run Snyk to check for vulnerabilities
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: snyk test --file=./ccsecw2.csproj
+      run: snyk test --file=./ccsecw2.csproj --package-manager=nuget
 
   Deploy:
     runs-on: ubuntu-latest
