@@ -35,6 +35,11 @@ jobs:
     needs: Initialize_Build
     runs-on: ubuntu-latest
     steps:
+      - name: Check SNYK_TOKEN
+        run: echo "SNYK_TOKEN is ${{ secrets.SNYK_TOKEN }}"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
       - name: Run Snyk to check for vulnerabilities
         run: |
           docker pull snyk/snyk-cli:docker
