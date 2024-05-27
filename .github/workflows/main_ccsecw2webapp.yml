@@ -20,7 +20,7 @@ jobs:
           dotnet-version: 7.0
 
       - name: Restore project dependencies
-        run: dotnet restore ccsecw2.sln
+        run: dotnet restore ./ccsecw2.sln
 
       - name: Test project
         run: dotnet test --no-restore --verbosity normal
