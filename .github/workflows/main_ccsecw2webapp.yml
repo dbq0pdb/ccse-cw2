@@ -6,7 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-
 jobs:
   Intitalize:
     runs-on: windows-latest
@@ -29,9 +28,11 @@ jobs:
   Snyk:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - name: Setup .NET
-        uses: actions/setup-dotnet@3.0.3
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 7.0
       - name: Restore dependencies
         run: dotnet restore ./path/to/your.sln
       - name: Run Snyk to check for vulnerabilities
@@ -44,26 +45,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Log in to registry
-      uses: docker/login-action@v2
-      with:
-        registry: https://ccsecw2reg.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_0b5bac57b0bd4ca2b524d5c48f14a083 }}
+      - name: Log in to registry
+        uses: docker/login-action@v2
+        with:
+          registry: https://ccsecw2reg.azurecr.io/
+          username: ${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}
+          password: ${{ secrets.AzureAppService_ContainerPassword_0b5bac57b0bd4ca2b524d5c48f14a083 }}
 
-    - name: Build and push container image to registry
-      id: build-image
-      uses: docker/build-push-action@v2
-      with:
-        push: true
-        tags: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
-        file: ./Dockerfile
-
+      - name: Build and push container image to registry
+        id: build-image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}
+          file: ./Dockerfile
 
   Deploy:
     runs-on: ubuntu-latest
@@ -73,11 +73,11 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'ccsecw2webapp'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_628f743c4b3a44dfa39c8a57b309b0a3 }}
-        images: 'ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}'
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'ccsecw2webapp'
+          slot-name: 'production'
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_628f743c4b3a44dfa39c8a57b309b0a3 }}
+          images: 'ccsecw2reg.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30fffea09cf74c74973f022931feb204 }}/myapp:${{ github.sha }}'
