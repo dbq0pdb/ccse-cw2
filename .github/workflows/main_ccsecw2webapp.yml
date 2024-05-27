@@ -18,9 +18,17 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./ccsecw2.sln
       - name: Run Snyk to check for vulnerabilities
+        id: snyk-scan
         uses: snyk/actions/dotnet@master
+        with:
+          args: --json-file-output=snyk-results.json
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Upload Snyk results
+        uses: actions/upload-artifact@v3
+        with:
+          name: snyk-results
+          path: snyk-results.json
 
   Build:
     needs: Snyk
